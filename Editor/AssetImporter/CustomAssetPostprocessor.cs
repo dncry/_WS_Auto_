@@ -34,9 +34,9 @@ namespace WS.Auto
         private const string _targetPathStr = ""; //"/_WS/";
 
         //预制路径
-        private const string _audioPathStr = "Assets/_WS_Auto_/Editor/AssetImporter/Audio/AudioImporter_Aud";
-        private const string _modelPathStr = "Assets/_WS_Auto_/Editor/AssetImporter/FBX/FBXImporter_Mod";
-        private const string _texturePathStr = "Assets/_WS_Auto_/Editor/AssetImporter/Texture/TextureImporter_Tex";
+        private const string _audioPathStr = "AssetImporter/Audio/AudioImporter_Aud";
+        private const string _modelPathStr = "AssetImporter/FBX/FBXImporter_Mod";
+        private const string _texturePathStr = "AssetImporter/Texture/TextureImporter_Tex";
 
         private const string _audioShortStr = "_Aud";
         private const string _modelShortStr = "_Mod";
@@ -221,7 +221,8 @@ namespace WS.Auto
 
         private void ApplyPreset(AssetImporter importer, string presetPath)
         {
-            var preset = AssetDatabase.LoadAssetAtPath<Preset>(presetPath + ".preset");
+            var preset = EditorGUIUtility.Load(presetPath + ".preset") as Preset;
+            //var preset = AssetDatabase.LoadAssetAtPath<Preset>(presetPath + ".preset");
             if (preset == null)
                 Debug.LogError("Unable to find required preset at path " + presetPath);
             else
