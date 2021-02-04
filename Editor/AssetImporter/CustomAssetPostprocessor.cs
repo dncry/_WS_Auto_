@@ -31,12 +31,12 @@ namespace WS.Auto
     public class CustomAssetPostprocessor : AssetPostprocessor
     {
         //作用范围
-        private const string _targetPathStr = ""; //"/_WS/";
+        private const string _targetPathStr = ""; 
 
         //预制路径
-        private const string _audioPathStr = "AssetImporter/Audio/AudioImporter_Aud";
-        private const string _modelPathStr = "AssetImporter/FBX/FBXImporter_Mod";
-        private const string _texturePathStr = "AssetImporter/Texture/TextureImporter_Tex";
+        private const string _audioPathStr = "Editor/AssetImporter/Audio/AudioImporter_Aud";
+        private const string _modelPathStr = "Editor/AssetImporter/FBX/FBXImporter_Mod";
+        private const string _texturePathStr = "Editor/AssetImporter/Texture/TextureImporter_Tex";
 
         private const string _audioShortStr = "_Aud";
         private const string _modelShortStr = "_Mod";
@@ -221,7 +221,8 @@ namespace WS.Auto
 
         private void ApplyPreset(AssetImporter importer, string presetPath)
         {
-            var preset = EditorGUIUtility.Load(presetPath + ".preset") as Preset;
+            var preset =AssetDatabase.LoadAssetAtPath<Preset>(
+             "Packages/com.ws.auto/" +  presetPath + ".preset");
             //var preset = AssetDatabase.LoadAssetAtPath<Preset>(presetPath + ".preset");
             if (preset == null)
                 Debug.LogError("Unable to find required preset at path " + presetPath);
