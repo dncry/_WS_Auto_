@@ -7,24 +7,28 @@ using UnityEngine;
 namespace WS.Auto
 {
     public class CreateBuildSettings
-{
-    [MenuItem("自定义/构建/项目配置")]
-    private static void _CreateBuildSettings()
     {
-        if ((UnityEngine.Object) BuildSettings.NullableInstance == (UnityEngine.Object) null)
+        [MenuItem("自定义/构建/项目配置")]
+        private static void SetBuildSettings()
         {
-            //Debug.Log("AAAAAAAAAAAA");
+            if (BuildSettings.NullableInstance == null)
+            {
+                CreateNewBuildSettings();
+            }
+
+            Selection.activeObject = (UnityEngine.Object) BuildSettings.Instance;
+        }
+
+
+        private static void CreateNewBuildSettings()
+        {
             BuildSettings instance = ScriptableObject.CreateInstance<BuildSettings>();
             string path1 = Path.Combine(Application.dataPath, "_WS_Auto_/Editor/AutoBuildPipeline");
             if (!Directory.Exists(path1))
                 Directory.CreateDirectory(path1);
-            string path2 = Path.Combine(Path.Combine("Assets", "_WS_Auto_/Editor/AutoBuildPipeline"), "BuildSettings.asset");
+            string path2 = Path.Combine(Path.Combine("Assets", "_WS_Auto_/Editor/AutoBuildPipeline"),
+                "BuildSettings.asset");
             AssetDatabase.CreateAsset((UnityEngine.Object) instance, path2);
         }
-
-        //Debug.Log("BBBBBBBBBBBBBBBBBB");
-        Selection.activeObject = (UnityEngine.Object) BuildSettings.Instance;
     }
-}
-    
 }
