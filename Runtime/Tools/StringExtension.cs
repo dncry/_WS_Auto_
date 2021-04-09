@@ -25,12 +25,18 @@ namespace WS.Auto
 
         public static string ToChildPath(this string name, Transform parent)
         {
+            if (parent == null)
+            {
+                Debug.Log("错误:不能传入空");
+                return null;
+            }
+
             var path = name;
             Transform target = null;
 
             if (name == parent.name)
             {
-                Debug.Log("错误");
+                Debug.Log("错误:名字与parent重复");
                 return null;
             }
 
@@ -54,6 +60,7 @@ namespace WS.Auto
             }
 
             path = target.parent.name + "/" + path;
+
             while (target.parent != parent)
             {
                 target = target.parent;
