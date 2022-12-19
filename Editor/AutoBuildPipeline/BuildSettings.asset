@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4223d02d59a5aab4ba4f53d09ca54290, type: 3}
+  m_Name: BuildSettings
+  m_EditorClassIdentifier: 
+  nameSpace: _EatingSimulator
+  companyName: ow
+  productName: Eating Simulator
+  version: 1.0.4
+  scenePaths:
+  - Assets/GameMain/Scenes/Launch/Scene_Splash.unity
+  - Assets/GameMain/Scenes/Launch/Scene_Launcher.unity
+  - Assets/GameMain/Scenes/Release/Scene_Menu.unity
+  - Assets/GameMain/Scenes/Release/Scene_Main.unity
+  - Assets/GameMain/Scenes/Release/Scene_End.unity
+  android:
+    packageName: com.owws.EatingSimulator
+    bundleVersionCode: 5
+    keystoreName: eating.keystore
+    keystorePass: eating
+    keyaliasName: eating
+    keyaliasPass: eating
+    buildAAB: 0
+  iOS:
+    packageName: 
+    build: 1
+  autoBuild: 0
+  autoGenerateAssetBundle: 0
+  buildPath_Android: build/local_android
+  buildPath_iOS: build/local_ios
+  isCloudBuild: 0

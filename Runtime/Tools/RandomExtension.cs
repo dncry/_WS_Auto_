@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-** Creator：万硕
+** Creator：dncry
 ** Time：2021年05月21日 星期五 15:04
 ----------------------------------------------------------------*/
 
@@ -35,6 +35,27 @@ namespace WS.Auto
                 groupLength - count);
         }
 
+        public static List<T> GetRandomCountGroup<T>(this List<T> group, int count, List<T> returnGroup)
+        {
+            var groupLength = group.Count;
+
+            if (groupLength < count)
+            {
+                Debug.LogWarning("越界");
+                return null;
+            }
+
+            returnGroup.Clear();
+            foreach (var value in group)
+            {
+                returnGroup.Add(value);
+            }
+
+            return GetRandomCountGroupWithList(returnGroup,
+                groupLength - count);
+        }
+
+
         public static List<T> GetRandomCountGroup<T>(this T[] group, int count)
         {
             var groupLength = group.Length;
@@ -46,6 +67,25 @@ namespace WS.Auto
             }
 
             return GetRandomCountGroupWithList(group.ToList(), groupLength - count);
+        }
+
+        public static List<T> GetRandomCountGroup<T>(this T[] group, int count, List<T> returnGroup)
+        {
+            var groupLength = group.Length;
+
+            if (groupLength < count)
+            {
+                Debug.LogWarning("越界");
+                return null;
+            }
+
+            returnGroup.Clear();
+            foreach (var value in group)
+            {
+                returnGroup.Add(value);
+            }
+
+            return GetRandomCountGroupWithList(returnGroup, groupLength - count);
         }
 
         private static List<T> GetRandomCountGroupWithList<T>(List<T> group, int removeCount)

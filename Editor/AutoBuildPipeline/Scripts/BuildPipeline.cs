@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Threading;
+using GooglePlayServices;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
@@ -9,7 +13,8 @@ namespace WS.Auto
 {
     public class BuildPipeline
     {
-       
+        private static readonly string Eol = Environment.NewLine;
+
         [MenuItem("自定义/构建/自动化Android")]
         public static void AutoBuild_Android()
         {
@@ -29,7 +34,7 @@ namespace WS.Auto
             Build_Common();
             Build_iOS();
         }
-        
+
         public static void Build_Common()
         {
             PlayerSettings.companyName = BuildSettings.Instance.companyName;
@@ -42,34 +47,48 @@ namespace WS.Auto
             Build_Common_Expand();
         }
 
-        public static void Build_Android(string keystorePath = "", string outPath = "")
+        public static void Build_Android(string cloudPath = "")
         {
             PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android,
                 BuildSettings.Instance.android.packageName);
             PlayerSettings.Android.bundleVersionCode = BuildSettings.Instance.android.bundleVersionCode;
 
-
-            if (keystorePath != "")
-            {
-                PlayerSettings.Android.keystoreName = keystorePath;
-            }
-
+            PlayerSettings.Android.useCustomKeystore = true;
+            PlayerSettings.Android.keystoreName =
+                $"{System.Environment.CurrentDirectory}/{BuildSettings.Instance.android.keystoreName}";
             PlayerSettings.Android.keystorePass = BuildSettings.Instance.android.keystorePass;
-
-            PlayerSettings.Android.keyaliasName = BuildSettings.Instance.android.keyaliasPass;
+            PlayerSettings.Android.keyaliasName = BuildSettings.Instance.android.keyaliasName;
             PlayerSettings.Android.keyaliasPass = BuildSettings.Instance.android.keyaliasPass;
+
+            EditorUserBuildSettings.buildAppBundle = BuildSettings.Instance.android.buildAAB;
 
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
 
-            //PlayerSettings.GetPropertyString("companyName", BuildTargetGroup.Android);
-
             Build_Android_Expand();
 
+            Debug.Log($"##############" +
+                      $"{System.Environment.CurrentDirectory}/{BuildSettings.Instance.android.keystoreName}");
+
+            if (BuildSettings.Instance.autoGenerateAssetBundle)
+            {
+                GenerateAssetBundle_Android();
+            }
+
             //打包
-            if (BuildSettings.Instance.autoBuild) Build_Android_StartBuild(outPath);
+            if (BuildSettings.Instance.autoBuild)
+            {
+                if (BuildSettings.Instance.isCloudBuild)
+                {
+                    Build_Android_StartBuild(cloudPath);
+                }
+                else
+                {
+                    Build_Android_StartBuild(BuildSettings.Instance.buildPath_Android);
+                }
+            }
         }
 
-        public static void Build_iOS(string outPath = "")
+        public static void Build_iOS()
         {
             PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, BuildSettings.Instance.iOS.packageName);
             PlayerSettings.iOS.buildNumber = BuildSettings.Instance.iOS.build;
@@ -82,9 +101,12 @@ namespace WS.Auto
 
             Build_iOS_Expand();
 
+            if (BuildSettings.Instance.autoGenerateAssetBundle)
+            {
+            }
 
             //打包
-            if (BuildSettings.Instance.autoBuild) Build_iOS_StartBuild(outPath);
+            if (BuildSettings.Instance.autoBuild) Build_iOS_StartBuild(BuildSettings.Instance.buildPath_iOS);
         }
 
 
@@ -92,16 +114,33 @@ namespace WS.Auto
 
         private static void Build_Common_Expand()
         {
-            //可寻址
-            //AddressableAssetSettings.CleanPlayerContent();
-            //AddressableAssetSettings.BuildPlayerContent();
         }
 
         private static void Build_Android_Expand()
         {
             //FacebookSDK自动生成Manifest
-            //Facebook.Unity.Editor. ManifestMod.GenerateManifest();
-            //LionStudios.Facebook.Editor.Android.ManifestMod.GenerateManifest();
+            Facebook.Unity.Editor.ManifestMod.GenerateManifest();
+            //Custom Gradle Properties Template
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+            
+            //Thread.Sleep(TimeSpan.FromSeconds(1));
+            
+            //PlayServicesResolver.MenuResolve();
+            
+            var assembly = Assembly.Load("Google.JarResolver");
+            Type type = assembly.GetType($"GooglePlayServices.PlayServicesResolver");
+            var method = type.GetMethod("ResolveSync", BindingFlags.NonPublic | BindingFlags.Static);
+            object[] tempVersion = {false, true};
+
+            // if (BuildSettings.Instance.isCloudBuild)
+            // {
+            //     tempVersion[0] = true;
+            // }
+            
+            method.Invoke(null, tempVersion);
+            Debug.Log("################PlayServicesResolveSync");
+            
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         private static void Build_iOS_Expand()
@@ -110,46 +149,211 @@ namespace WS.Auto
 
         #endregion
 
+        #region Generate AssetBundle
+
+        private static void GenerateAssetBundle_Android()
+        {
+            var assembly = Assembly.Load("Assembly-CSharp-Editor");
+
+            Type type = assembly.GetType(
+                $"{BuildSettings.Instance.nameSpace}.Editor.DataTableTools.DataTableGeneratorMenu");
+            var method = type.GetMethod("GenerateDataTables", BindingFlags.NonPublic | BindingFlags.Static);
+            method?.Invoke(null, null);
+
+            Debug.Log("#############GenerateDataTables");
+
+
+            Type type2 =
+                assembly.GetType($"{BuildSettings.Instance.nameSpace}.Editor.ResourceTools.ResourceRuleEditor");
+
+            object obj2 = type2.GetMethod("OpenWithReflection", BindingFlags.NonPublic | BindingFlags.Static)
+                ?.Invoke(null, null);
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            type2.GetMethod("RefreshResourceCollection").Invoke(obj2, null);
+
+            type2.GetMethod("Save", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(obj2, null);
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            type2.GetMethod("CloseWithReflection").Invoke(obj2, null);
+
+            Debug.Log("#############RefreshResourceCollection");
+
+
+            var assembly3 = Assembly.Load("UnityGameFramework.Editor");
+            Type type3 = assembly3.GetType("UnityGameFramework.Editor.ResourceTools.ResourceBuilder");
+
+            object obj3 =
+                type3.GetMethod("OpenWithReflection", BindingFlags.NonPublic | BindingFlags.Static)?.Invoke(null, null);
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            var control = type3.GetField("m_Controller",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+
+            var tempControl = control.GetValue(obj3);
+
+            control.FieldType.GetProperty("OutputDirectory")
+                .SetValue(tempControl, $"{System.Environment.CurrentDirectory}/StreamingAssets");
+
+            object[] tempVersion = {1};
+            control.FieldType.GetProperty("InternalResourceVersion").SetValue(tempControl, 1);
+
+            object[] temp0 = {1 << 0, false};
+            object[] temp1 = {1 << 1, false};
+            object[] temp2 = {1 << 2, false};
+            object[] temp3 = {1 << 3, false};
+            object[] temp4 = {1 << 4, false};
+            object[] temp5 = {1 << 5, true};
+            object[] temp6 = {1 << 6, false};
+            object[] temp7 = {1 << 7, false};
+
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp0);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp1);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp2);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp3);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp4);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp5);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp6);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp7);
+
+
+            control.SetValue(obj3, tempControl);
+
+            type3.GetMethod("SaveConfiguration", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(obj3, null);
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            // type3.GetField("m_OrderBuildResources", BindingFlags.NonPublic | BindingFlags.Instance)
+            //     .SetValue(obj3, true);
+
+            type3.GetMethod("BuildResources", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(obj3, null);
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            type3.GetMethod("CloseWithReflection").Invoke(obj3, null);
+
+            Debug.Log("#############BuildAssetBundle");
+        }
+
+        #endregion
+
 
         #region Build
 
-        private static void Build_Android_StartBuild(string outPath = "")
+        private static void Build_Android_StartBuild(string outPath)
         {
-            string nowTime = System.DateTime.Now.ToString("_yyyyMMdd_HH_mm");
-            string filePath = outPath == ""
-                ? BuildSettings.Instance.buildPath_Android
-                : outPath
-                  + BuildSettings.Instance.productName + "_" +
-                  BuildSettings.Instance.version + "_" + nowTime;
-            filePath += ".apk";
+            string filePath =
+                $"{System.Environment.CurrentDirectory}/{outPath}/{BuildSettings.Instance.version}";
+
+            if (BuildSettings.Instance.android.buildAAB)
+            {
+                filePath += ".aab";
+            }
+            else
+            {
+                filePath += ".apk";
+            }
+
+            if (BuildSettings.Instance.isCloudBuild)
+            {
+                filePath = outPath;
+            }
+
+            Debug.Log($"################{filePath}");
 
             var buildPlayerOptions = new BuildPlayerOptions
             {
                 target = BuildTarget.Android,
                 locationPathName = filePath,
                 options = BuildOptions.None,
-                scenes = BuildSettings.Instance.scenePaths
+                scenes = GetScene()
+            };
+
+            BuildSummary buildSummary = UnityEditor.BuildPipeline.BuildPlayer(buildPlayerOptions).summary;
+            ReportSummary(buildSummary);
+            
+            Debug.Log($"################Build Success");
+            
+            if (BuildSettings.Instance.isCloudBuild)
+            {
+                ExitWithResult(buildSummary.result);
+            }
+        }
+
+        private static void ReportSummary(BuildSummary summary)
+        {
+            Console.WriteLine(
+                $"{Eol}" +
+                $"###########################{Eol}" +
+                $"#      Build results      #{Eol}" +
+                $"###########################{Eol}" +
+                $"{Eol}" +
+                $"Duration: {summary.totalTime.ToString()}{Eol}" +
+                $"Warnings: {summary.totalWarnings.ToString()}{Eol}" +
+                $"Errors: {summary.totalErrors.ToString()}{Eol}" +
+                $"Size: {summary.totalSize.ToString()} bytes{Eol}" +
+                $"{Eol}"
+            );
+        }
+
+        private static void ExitWithResult(BuildResult result)
+        {
+            switch (result)
+            {
+                case BuildResult.Succeeded:
+                    Console.WriteLine("Build succeeded!");
+                    EditorApplication.Exit(0);
+                    break;
+                case BuildResult.Failed:
+                    Console.WriteLine("Build failed!");
+                    EditorApplication.Exit(101);
+                    break;
+                case BuildResult.Cancelled:
+                    Console.WriteLine("Build cancelled!");
+                    EditorApplication.Exit(102);
+                    break;
+                case BuildResult.Unknown:
+                default:
+                    Console.WriteLine("Build result is unknown!");
+                    EditorApplication.Exit(103);
+                    break;
+            }
+        }
+
+
+        private static void Build_iOS_StartBuild(string outPath = "")
+        {
+            string filePath = outPath == ""
+                ? BuildSettings.Instance.buildPath_iOS
+                : outPath;
+
+            var buildPlayerOptions = new BuildPlayerOptions
+            {
+                target = BuildTarget.iOS,
+                locationPathName = filePath,
+                options = BuildOptions.None,
+                scenes = GetScene()
             };
 
             BuildReport report = UnityEditor.BuildPipeline.BuildPlayer(buildPlayerOptions);
         }
 
 
-        private static void Build_iOS_StartBuild(string outPath = "")
+        private static string[] GetScene()
         {
-            string nowTime = System.DateTime.Now.ToString("_MMdd_HH_mm");
-            string filePath = outPath == ""
-                ? BuildSettings.Instance.buildPath_iOS
-                : outPath + nowTime;
+            string[] tempScene = new string[BuildSettings.Instance.scenePaths.Length];
 
-            var buildPlayerOptions = new BuildPlayerOptions
+            for (int i = 0; i < tempScene.Length; i++)
             {
-                target = BuildTarget.iOS,
-                locationPathName = filePath,
-                options = BuildOptions.None
-            };
+                tempScene[i] = $"{System.Environment.CurrentDirectory}/{BuildSettings.Instance.scenePaths[i]}";
 
-            BuildReport report = UnityEditor.BuildPipeline.BuildPlayer(buildPlayerOptions);
+                Debug.Log(tempScene[i]);
+            }
+
+            return tempScene;
         }
 
         #endregion
