@@ -11,15 +11,31 @@ namespace WS.Auto
         private static readonly string Eol = Environment.NewLine;
 
         private static readonly string[] Secrets =
-            {"androidKeystorePass", "androidKeyaliasName", "androidKeyaliasPass"};
+            { "androidKeystorePass", "androidKeyaliasName", "androidKeyaliasPass" };
 
         public static void AutoBuild()
         {
-#if UNITY_ANDROID
-            BuildAndroid();
-#elif UNITY_IOS
-            BuildIOS();
-#endif
+            Dictionary<string, string> options = new Dictionary<string, string>();
+            ParseCommandLineArguments(out options);
+
+            foreach (var dic in options)
+            {
+                Debug.Log($"###################{dic.Key}##########{dic.Value}#############");
+            }
+
+
+            if (options.TryGetValue("buildTarget", out string buildTarget))
+            {
+                if (string.Equals(buildTarget, "Android", StringComparison.OrdinalIgnoreCase))
+                {
+                    BuildAndroid();
+                }
+
+                if (string.Equals(buildTarget, "iOS", StringComparison.OrdinalIgnoreCase))
+                {
+                    BuildIOS();
+                }
+            }
         }
 
         //private static int parameterCount = 2;
@@ -31,28 +47,52 @@ namespace WS.Auto
             BuildSettings.Instance.autoBuild = true;
             BuildSettings.Instance.isCloudBuild = true;
             BuildSettings.Instance.autoGenerateAssetBundle = true;
-            
+
             EditorUserBuildSettings.exportAsGoogleAndroidProject = false;
 
-            
+
             Dictionary<string, string> options = new Dictionary<string, string>();
             ParseCommandLineArguments(out options);
 
-            //var command = System.Environment.GetCommandLineArgs();
+            // if (options.TryGetValue("customBuildPath", out string customBuildPath))
+            // {
+            //     BuildSettings.Instance.android.buildAAB =  customBuildPath.EndsWith(".aab");
+            // }
 
-            
-            if (options.TryGetValue("customBuildPath", out string customBuildPath))
+            if (options.TryGetValue("buildVersion", out string buildVersion))
             {
-                BuildSettings.Instance.android.buildAAB =  options["customBuildPath"].EndsWith(".aab");
+                BuildSettings.Instance.version = buildVersion;
             }
-            
+
+            if (options.TryGetValue("buildBundleCode", out string buildBundleCode))
+            {
+                BuildSettings.Instance.android.bundleVersionCode = int.Parse(buildBundleCode);
+            }
+
+            if (options.TryGetValue("buildPath", out string buildPath))
+            {
+                BuildSettings.Instance.buildPath_Android = buildPath;
+            }
+
+            if (options.TryGetValue("buildSeparateAsset", out string buildSeparateAsset))
+            {
+                bool.TryParse(buildSeparateAsset, out bool value);
+                BuildSettings.Instance.android.separateAsset = value;
+            }
+
+            if (options.TryGetValue("buildAAB", out string buildAAB))
+            {
+                bool.TryParse(buildAAB, out bool value);
+                BuildSettings.Instance.android.buildAAB = value;
+            }
+
             foreach (var dic in options)
             {
-                Debug.Log($"###################{dic.Key}");
+                Debug.Log($"###################{dic.Key}##########{dic.Value}#############");
             }
-            
+
             BuildPipeline.Build_Common();
-            BuildPipeline.Build_Android(customBuildPath);
+            BuildPipeline.Build_Android();
 
             Debug.Log("#################Complete#################");
 
@@ -121,7 +161,7 @@ namespace WS.Auto
                 // Parse optional value
                 bool flagHasValue = next < args.Length && !args[next].StartsWith("-");
                 string value = flagHasValue ? args[next].TrimStart('-') : "";
-                bool secret = ((IList) Secrets).Contains(flag);
+                bool secret = ((IList)Secrets).Contains(flag);
                 string displayValue = secret ? "*HIDDEN*" : "\"" + value + "\"";
 
                 // Assign

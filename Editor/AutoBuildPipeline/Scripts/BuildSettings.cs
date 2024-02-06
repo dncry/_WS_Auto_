@@ -82,6 +82,7 @@ namespace WS.Auto
             public string keyaliasName = "";
             public string keyaliasPass = "";
 
+            public bool separateAsset = false;
             public bool buildAAB = false;
         }
 

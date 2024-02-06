@@ -47,7 +47,7 @@ namespace WS.Auto
             Build_Common_Expand();
         }
 
-        public static void Build_Android(string cloudPath = "")
+        public static void Build_Android()
         {
             PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android,
                 BuildSettings.Instance.android.packageName);
@@ -77,14 +77,7 @@ namespace WS.Auto
             //打包
             if (BuildSettings.Instance.autoBuild)
             {
-                if (BuildSettings.Instance.isCloudBuild)
-                {
-                    Build_Android_StartBuild(cloudPath);
-                }
-                else
-                {
-                    Build_Android_StartBuild(BuildSettings.Instance.buildPath_Android);
-                }
+                Build_Android_StartBuild(BuildSettings.Instance.buildPath_Android);
             }
         }
 
@@ -245,8 +238,10 @@ namespace WS.Auto
 
         private static void Build_Android_StartBuild(string outPath)
         {
+            var datatimenow = DateTime.Now.ToString("MM_dd_HH_mm");
             string filePath =
-                $"{System.Environment.CurrentDirectory}/{outPath}/{BuildSettings.Instance.version}";
+                $"{System.Environment.CurrentDirectory}/{outPath}/{BuildSettings.Instance.productName+"_"+BuildSettings.Instance.version+"_"+datatimenow}";
+
 
             if (BuildSettings.Instance.android.buildAAB)
             {
@@ -259,7 +254,7 @@ namespace WS.Auto
 
             if (BuildSettings.Instance.isCloudBuild)
             {
-                filePath = outPath;
+                //filePath = outPath;
             }
 
             Debug.Log($"################{filePath}");
