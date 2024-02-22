@@ -1,11 +1,15 @@
 啦啦啦
 
-宏
-AUTO_DOTWEEN
-AUTO_UGF
+"com.ws.auto": "https://github.com/dncry/_WS_Auto_.git#{版本号}"
 
-AUTO_GOOGLE
-AUTO_FACEBOOK
+宏  
+
+AUTO_DOTWEEN  
+AUTO_UGF  
+
+AUTO_GOOGLE  
+AUTO_FACEBOOK  
+
 
 RES
 
