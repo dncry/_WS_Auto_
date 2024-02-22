@@ -8,7 +8,13 @@ namespace WS.Auto
 {
     public class CreateBuildSettings
     {
-        [MenuItem("自定义/构建/项目配置")]
+        // [MenuItem("自定义/构建", false, 101)]
+        // private static bool Validate()
+        // {
+        //     return true;
+        // }
+        
+        [MenuItem("自定义/构建/项目配置", false, 101)]
         private static void SetBuildSettings()
         {
             if (BuildSettings.NullableInstance == null)

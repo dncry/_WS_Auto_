@@ -2,12 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
-using GooglePlayServices;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
+
+#if AUTO_GOOGLE
+using GooglePlayServices;
+#endif
+
+#if AUTO_FACEBOOK
+#endif
 
 namespace WS.Auto
 {
@@ -15,7 +22,7 @@ namespace WS.Auto
     {
         private static readonly string Eol = Environment.NewLine;
 
-        [MenuItem("自定义/构建/自动化Android")]
+        [MenuItem("自定义/构建/自动化Android", false, 102)]
         public static void AutoBuild_Android()
         {
 #if !UNITY_ANDROID
@@ -25,7 +32,7 @@ namespace WS.Auto
             Build_Android();
         }
 
-        [MenuItem("自定义/构建/自动化iOS")]
+        [MenuItem("自定义/构建/自动化iOS", false, 103)]
         public static void AutoBuild_iOS()
         {
 #if !UNITY_IOS
@@ -111,28 +118,46 @@ namespace WS.Auto
 
         private static void Build_Android_Expand()
         {
+            
+#if AUTO_FACEBOOK
             //FacebookSDK自动生成Manifest
             Facebook.Unity.Editor.ManifestMod.GenerateManifest();
+#endif
+
+
+            // 获取当前的 AndroidManifest.xml 内容
+            string manifestPath = "Assets/Plugins/Android/AndroidManifest.xml"; // 替换成你的 AndroidManifest.xml 的路径
+            string manifestContent = System.IO.File.ReadAllText(manifestPath);
+
+            // 使用正则表达式替换 authorities
+            string oldAuthoritiesPattern = @"(com\.facebook\.app\.FacebookContentProvider)(\d+)";
+            string newAuthorities = "${applicationIdPlaceholder}.FacebookContentProvider$2";
+            manifestContent = Regex.Replace(manifestContent, oldAuthoritiesPattern, newAuthorities);
+
+            // 将修改后的内容写回 AndroidManifest.xml
+            System.IO.File.WriteAllText(manifestPath, manifestContent);
+
+
             //Custom Gradle Properties Template
             Thread.Sleep(TimeSpan.FromSeconds(1));
-            
+
             //Thread.Sleep(TimeSpan.FromSeconds(1));
-            
+
             //PlayServicesResolver.MenuResolve();
-            
+
             var assembly = Assembly.Load("Google.JarResolver");
             Type type = assembly.GetType($"GooglePlayServices.PlayServicesResolver");
             var method = type.GetMethod("ResolveSync", BindingFlags.NonPublic | BindingFlags.Static);
-            object[] tempVersion = {false, true};
+            object[] tempVersion = { false, true };
 
             // if (BuildSettings.Instance.isCloudBuild)
             // {
             //     tempVersion[0] = true;
             // }
-            
+
             method.Invoke(null, tempVersion);
             Debug.Log("################PlayServicesResolveSync");
-            
+
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
@@ -191,17 +216,17 @@ namespace WS.Auto
             control.FieldType.GetProperty("OutputDirectory")
                 .SetValue(tempControl, $"{System.Environment.CurrentDirectory}/StreamingAssets");
 
-            object[] tempVersion = {1};
+            object[] tempVersion = { 1 };
             control.FieldType.GetProperty("InternalResourceVersion").SetValue(tempControl, 1);
 
-            object[] temp0 = {1 << 0, false};
-            object[] temp1 = {1 << 1, false};
-            object[] temp2 = {1 << 2, false};
-            object[] temp3 = {1 << 3, false};
-            object[] temp4 = {1 << 4, false};
-            object[] temp5 = {1 << 5, true};
-            object[] temp6 = {1 << 6, false};
-            object[] temp7 = {1 << 7, false};
+            object[] temp0 = { 1 << 0, false };
+            object[] temp1 = { 1 << 1, false };
+            object[] temp2 = { 1 << 2, false };
+            object[] temp3 = { 1 << 3, false };
+            object[] temp4 = { 1 << 4, false };
+            object[] temp5 = { 1 << 5, true };
+            object[] temp6 = { 1 << 6, false };
+            object[] temp7 = { 1 << 7, false };
 
             control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp0);
             control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp1);
@@ -240,7 +265,7 @@ namespace WS.Auto
         {
             var datatimenow = DateTime.Now.ToString("MM_dd_HH_mm");
             string filePath =
-                $"{System.Environment.CurrentDirectory}/{outPath}/{BuildSettings.Instance.productName+"_"+BuildSettings.Instance.version+"_"+datatimenow}";
+                $"{System.Environment.CurrentDirectory}/{outPath}/{BuildSettings.Instance.productName + "_" + BuildSettings.Instance.version + "_" + datatimenow}";
 
 
             if (BuildSettings.Instance.android.buildAAB)
@@ -269,9 +294,9 @@ namespace WS.Auto
 
             BuildSummary buildSummary = UnityEditor.BuildPipeline.BuildPlayer(buildPlayerOptions).summary;
             ReportSummary(buildSummary);
-            
+
             Debug.Log($"################Build Success");
-            
+
             if (BuildSettings.Instance.isCloudBuild)
             {
                 ExitWithResult(buildSummary.result);

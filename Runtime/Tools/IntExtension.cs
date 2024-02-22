@@ -17,7 +17,12 @@ namespace WS.Auto
     {
         public static string ToLevelString(this int level)
         {
-            return $"Level_{level.ToString().PadLeft(5, '0')}";
+            if (level % 10000 > 500)
+            {
+                return "Lv_MAX";
+            }
+            
+            return $"Lv_{level.ToString().PadLeft(5, '0')}";
         }
     }
 }

@@ -6,7 +6,7 @@ namespace WS.Auto
 {
     public class CustomTools : EditorWindow
     {
-        [MenuItem("自定义/工具")]
+        [MenuItem("自定义/工具", false, 105)]
         private static void ShowWindow()
         {
             var window = GetWindow<CustomTools>();

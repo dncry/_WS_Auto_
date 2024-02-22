@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4223d02d59a5aab4ba4f53d09ca54290, type: 3}
   m_Name: BuildSettings
   m_EditorClassIdentifier: 
-  nameSpace: _EatingSimulator
+  nameSpace: _SortNut
   companyName: ow
-  productName: Eating Simulator
-  version: 1.0.4
+  productName: Nut Sort
+  version: 1.0.2
   scenePaths:
   - Assets/GameMain/Scenes/Launch/Scene_Splash.unity
   - Assets/GameMain/Scenes/Launch/Scene_Launcher.unity
@@ -23,18 +23,18 @@ MonoBehaviour:
   - Assets/GameMain/Scenes/Release/Scene_Main.unity
   - Assets/GameMain/Scenes/Release/Scene_End.unity
   android:
-    packageName: com.owws.EatingSimulator
-    bundleVersionCode: 5
-    keystoreName: eating.keystore
-    keystorePass: eating
-    keyaliasName: eating
-    keyaliasPass: eating
-    buildAAB: 0
+    packageName: com.owws.SortNut
+    bundleVersionCode: 2
+    keystoreName: common.keystore
+    keystorePass: common
+    keyaliasName: common
+    keyaliasPass: common
+    buildAAB: 1
   iOS:
     packageName: 
     build: 1
   autoBuild: 0
-  autoGenerateAssetBundle: 0
+  autoGenerateAssetBundle: 1
   buildPath_Android: build/local_android
   buildPath_iOS: build/local_ios
   isCloudBuild: 0
