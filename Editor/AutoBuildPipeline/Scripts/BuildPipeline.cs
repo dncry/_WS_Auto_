@@ -13,9 +13,6 @@ using UnityEngine;
 using GooglePlayServices;
 #endif
 
-#if AUTO_FACEBOOK
-#endif
-
 namespace WS.Auto
 {
     public class BuildPipeline
@@ -118,12 +115,9 @@ namespace WS.Auto
 
         private static void Build_Android_Expand()
         {
-            
 #if AUTO_FACEBOOK
             //FacebookSDK自动生成Manifest
             Facebook.Unity.Editor.ManifestMod.GenerateManifest();
-#endif
-
 
             // 获取当前的 AndroidManifest.xml 内容
             string manifestPath = "Assets/Plugins/Android/AndroidManifest.xml"; // 替换成你的 AndroidManifest.xml 的路径
@@ -136,27 +130,18 @@ namespace WS.Auto
 
             // 将修改后的内容写回 AndroidManifest.xml
             System.IO.File.WriteAllText(manifestPath, manifestContent);
+#endif
 
-
-            //Custom Gradle Properties Template
             Thread.Sleep(TimeSpan.FromSeconds(1));
 
-            //Thread.Sleep(TimeSpan.FromSeconds(1));
-
-            //PlayServicesResolver.MenuResolve();
-
+#if AUTO_GOOGLE
             var assembly = Assembly.Load("Google.JarResolver");
             Type type = assembly.GetType($"GooglePlayServices.PlayServicesResolver");
             var method = type.GetMethod("ResolveSync", BindingFlags.NonPublic | BindingFlags.Static);
             object[] tempVersion = { false, true };
-
-            // if (BuildSettings.Instance.isCloudBuild)
-            // {
-            //     tempVersion[0] = true;
-            // }
-
             method.Invoke(null, tempVersion);
             Debug.Log("################PlayServicesResolveSync");
+#endif
 
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
@@ -171,6 +156,7 @@ namespace WS.Auto
 
         private static void GenerateAssetBundle_Android()
         {
+#if AUTO_UGF
             var assembly = Assembly.Load("Assembly-CSharp-Editor");
 
             Type type = assembly.GetType(
@@ -254,6 +240,8 @@ namespace WS.Auto
             type3.GetMethod("CloseWithReflection").Invoke(obj3, null);
 
             Debug.Log("#############BuildAssetBundle");
+
+#endif
         }
 
         #endregion
