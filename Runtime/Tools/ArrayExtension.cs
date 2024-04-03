@@ -3,7 +3,7 @@
 ** Time：2024年02月23日 星期五 12:01
 ----------------------------------------------------------------*/
 
-namespace _Tools
+namespace WS.Auto
 {
     public static class ArrayExtension
     {
