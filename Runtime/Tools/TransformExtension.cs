@@ -37,6 +37,7 @@ namespace WS.Auto
             float duration,
             bool snapping = false)
         {
+
             if (numJumps < 1)
                 numJumps = 1;
             float startPosY = 0.0f;
@@ -71,6 +72,8 @@ namespace WS.Auto
                 target.position = position;
             }));
             return s;
+
+
         }
 #endif
         

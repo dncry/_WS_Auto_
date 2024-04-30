@@ -251,7 +251,7 @@ namespace WS.Auto
 
         private static void Build_Android_StartBuild(string outPath)
         {
-            var datatimenow = DateTime.Now.ToString("MM_dd_HH_mm");
+            var datatimenow = (DateTime.UtcNow + new TimeSpan(0, 8, 0, 0)).ToString("MM_dd_HH_mm");
             string filePath =
                 $"{System.Environment.CurrentDirectory}/{outPath}/{BuildSettings.Instance.productName + "_" + BuildSettings.Instance.version + "_" + datatimenow}";
 
