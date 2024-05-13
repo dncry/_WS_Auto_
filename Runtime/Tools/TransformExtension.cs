@@ -5,7 +5,7 @@
 
 using UnityEngine;
 
-#if AUTO_DOTWEEN
+#if DOTWEEN_ENABLED
 using DG.Tweening;
 using DG.Tweening.Core;
 #endif
@@ -28,7 +28,7 @@ namespace WS.Auto
             source.localScale = Vector3.one;
         }
 
-#if AUTO_DOTWEEN
+#if DOTWEEN_ENABLED
         public static Sequence DOJumpZ(
             this Transform target,
             Vector3 endValue,
