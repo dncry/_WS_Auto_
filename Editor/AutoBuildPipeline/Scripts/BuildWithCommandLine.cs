@@ -86,6 +86,40 @@ namespace WS.Auto
                 BuildSettings.Instance.android.buildAAB = value;
             }
 
+
+            if (options.TryGetValue("sdkPath", out string sdkPath))
+            {
+                if (sdkPath != "")
+                {
+                    EditorPrefs.SetString("AndroidSdkRoot", sdkPath);
+                }
+            }
+
+            if (options.TryGetValue("ndkPath", out string ndkPath))
+            {
+                if (ndkPath != "")
+                {
+                    EditorPrefs.SetString("AndroidNdkRoot", ndkPath);
+                }
+            }
+
+            if (options.TryGetValue("jdkPath", out string jdkPath))
+            {
+                if (jdkPath != "")
+                {
+                    EditorPrefs.SetString("JdkPath", jdkPath);
+                }
+            }
+
+            if (options.TryGetValue("gradlePath", out string gradlePath))
+            {
+                if (gradlePath != "")
+                {
+                    EditorPrefs.SetString("GradlePath", gradlePath);
+                }
+            }
+
+
             foreach (var dic in options)
             {
                 Debug.Log($"###################{dic.Key}##########{dic.Value}#############");
