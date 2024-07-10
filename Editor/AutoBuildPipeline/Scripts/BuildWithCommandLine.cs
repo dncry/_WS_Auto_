@@ -119,7 +119,12 @@ namespace WS.Auto
                 if (gradlePath != "")
                 {
                     Debug.Log("********** Set gradlePath ***********");
+
+                    Debug.Log($"********** Set gradlePath 1111 {EditorPrefs.GetString("GradlePath")}***********");
+
                     EditorPrefs.SetString("GradlePath", gradlePath);
+                    
+                    Debug.Log($"********** Set gradlePath 2222 {EditorPrefs.GetString("GradlePath")}***********");
                 }
             }
 
