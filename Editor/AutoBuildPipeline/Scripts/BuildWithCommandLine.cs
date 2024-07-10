@@ -92,6 +92,7 @@ namespace WS.Auto
                 if (sdkPath != "")
                 {
                     Debug.Log("********** Set sdkPath ***********");
+                    
                     EditorPrefs.SetString("AndroidSdkRoot", sdkPath);
                 }
             }
@@ -101,6 +102,8 @@ namespace WS.Auto
                 if (ndkPath != "")
                 {
                     Debug.Log("********** Set ndkPath ***********");
+
+                    EditorPrefs.SetBool("UseEmbeddedNdk", false);
                     EditorPrefs.SetString("AndroidNdkRoot", ndkPath);
                 }
             }
@@ -110,6 +113,8 @@ namespace WS.Auto
                 if (jdkPath != "")
                 {
                     Debug.Log("********** Set jdkPath ***********");
+
+                    EditorPrefs.SetBool("UseEmbeddedJdk", false);
                     EditorPrefs.SetString("JdkPath", jdkPath);
                 }
             }
@@ -120,10 +125,13 @@ namespace WS.Auto
                 {
                     Debug.Log("********** Set gradlePath ***********");
 
+
+                    EditorPrefs.SetBool("GradleUseEmbedded", false);
+
                     Debug.Log($"********** Set gradlePath 1111 {EditorPrefs.GetString("GradlePath")}***********");
 
                     EditorPrefs.SetString("GradlePath", gradlePath);
-                    
+
                     Debug.Log($"********** Set gradlePath 2222 {EditorPrefs.GetString("GradlePath")}***********");
                 }
             }
