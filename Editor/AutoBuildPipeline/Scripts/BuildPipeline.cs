@@ -64,7 +64,9 @@ namespace WS.Auto
             PlayerSettings.Android.keyaliasName = BuildSettings.Instance.android.keyaliasName;
             PlayerSettings.Android.keyaliasPass = BuildSettings.Instance.android.keyaliasPass;
 
-            EditorUserBuildSettings.buildAppBundle = BuildSettings.Instance.android.buildAAB;
+
+            //EditorUserBuildSettings.buildAppBundle = BuildSettings.Instance.android.buildAAB;
+
 
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
 
@@ -256,18 +258,21 @@ namespace WS.Auto
                 $"{System.Environment.CurrentDirectory}/{outPath}/{BuildSettings.Instance.productName + "_" + BuildSettings.Instance.version + "_" + datatimenow}";
 
 
-            if (BuildSettings.Instance.android.buildAAB)
+            if (BuildSettings.Instance.android.buildAndroidType == BuildSettings.BuildAndroidType.Apk)
+            {
+                filePath += ".apk";
+            }
+            else if (BuildSettings.Instance.android.buildAndroidType == BuildSettings.BuildAndroidType.Apk)
             {
                 filePath += ".aab";
             }
             else
             {
-                filePath += ".apk";
+                filePath += "/exportProject";
             }
 
             if (BuildSettings.Instance.isCloudBuild)
             {
-                //filePath = outPath;
             }
 
             Debug.Log($"################{filePath}");

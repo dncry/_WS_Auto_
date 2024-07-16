@@ -80,10 +80,20 @@ namespace WS.Auto
                 BuildSettings.Instance.android.separateAsset = value;
             }
 
-            if (options.TryGetValue("buildAAB", out string buildAAB))
+            if (options.TryGetValue("buildAndroidType", out string buildAndroidType))
             {
-                bool.TryParse(buildAAB, out bool value);
-                BuildSettings.Instance.android.buildAAB = value;
+                if (buildAndroidType == "apk")
+                {
+                    BuildSettings.Instance.android.buildAndroidType = BuildSettings.BuildAndroidType.Apk;
+                }
+                if (buildAndroidType == "aab")
+                {
+                    BuildSettings.Instance.android.buildAndroidType = BuildSettings.BuildAndroidType.Aab;
+                }
+                if (buildAndroidType == "androidStudio")
+                {
+                    BuildSettings.Instance.android.buildAndroidType = BuildSettings.BuildAndroidType.AndroidStudio;
+                }
             }
 
 
@@ -92,7 +102,7 @@ namespace WS.Auto
                 if (sdkPath != "")
                 {
                     Debug.Log("********** Set sdkPath ***********");
-                    
+
                     EditorPrefs.SetBool("SdkUseEmbedded", false);
                     EditorPrefs.SetString("AndroidSdkRoot", sdkPath);
                 }
@@ -125,7 +135,7 @@ namespace WS.Auto
                 if (gradlePath != "")
                 {
                     Debug.Log("********** Set gradlePath ***********");
-                    
+
                     EditorPrefs.SetBool("GradleUseEmbedded", false);
                     EditorPrefs.SetString("GradlePath", gradlePath);
                 }
