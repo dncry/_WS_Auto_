@@ -262,7 +262,7 @@ namespace WS.Auto
             {
                 filePath += ".apk";
             }
-            else if (BuildSettings.Instance.android.buildAndroidType == BuildSettings.BuildAndroidType.Apk)
+            else if (BuildSettings.Instance.android.buildAndroidType == BuildSettings.BuildAndroidType.Aab)
             {
                 filePath += ".aab";
             }
