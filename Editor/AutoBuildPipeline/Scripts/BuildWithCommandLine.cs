@@ -85,7 +85,7 @@ namespace WS.Auto
                 bool.TryParse(buildAAB, out bool value);
                 BuildSettings.Instance.android.buildAAB = value;
             }
-            
+
             if (options.TryGetValue("exportProject", out string exportProject))
             {
                 bool.TryParse(exportProject, out bool value);
@@ -98,7 +98,7 @@ namespace WS.Auto
                 if (sdkPath != "")
                 {
                     Debug.Log("********** Set sdkPath ***********");
-                    
+
                     EditorPrefs.SetBool("SdkUseEmbedded", false);
                     EditorPrefs.SetString("AndroidSdkRoot", sdkPath);
                 }
@@ -131,7 +131,7 @@ namespace WS.Auto
                 if (gradlePath != "")
                 {
                     Debug.Log("********** Set gradlePath ***********");
-                    
+
                     EditorPrefs.SetBool("GradleUseEmbedded", false);
                     EditorPrefs.SetString("GradlePath", gradlePath);
                 }
@@ -153,6 +153,74 @@ namespace WS.Auto
             BuildSettings.Instance.autoGenerateAssetBundle = false;
         }
 
+
+        public static void BuildAndroidWithAndroidStudio()
+        {
+            Debug.Log("#################BuildAndroid#################");
+
+            BuildSettings.Instance.autoBuild = true;
+            BuildSettings.Instance.isCloudBuild = true;
+            BuildSettings.Instance.autoGenerateAssetBundle = true;
+
+            EditorUserBuildSettings.exportAsGoogleAndroidProject = false;
+
+
+            Dictionary<string, string> options = new Dictionary<string, string>();
+            ParseCommandLineArguments(out options);
+
+            // if (options.TryGetValue("customBuildPath", out string customBuildPath))
+            // {
+            //     BuildSettings.Instance.android.buildAAB =  customBuildPath.EndsWith(".aab");
+            // }
+
+            if (options.TryGetValue("buildVersion", out string buildVersion))
+            {
+                BuildSettings.Instance.version = buildVersion;
+            }
+
+            if (options.TryGetValue("buildBundleCode", out string buildBundleCode))
+            {
+                BuildSettings.Instance.android.bundleVersionCode = int.Parse(buildBundleCode);
+            }
+
+            if (options.TryGetValue("buildPath", out string buildPath))
+            {
+                BuildSettings.Instance.buildPath_Android = buildPath;
+            }
+
+            if (options.TryGetValue("buildSeparateAsset", out string buildSeparateAsset))
+            {
+                bool.TryParse(buildSeparateAsset, out bool value);
+                BuildSettings.Instance.android.separateAsset = value;
+            }
+
+            if (options.TryGetValue("buildAAB", out string buildAAB))
+            {
+                bool.TryParse(buildAAB, out bool value);
+                BuildSettings.Instance.android.buildAAB = value;
+            }
+
+            if (options.TryGetValue("exportProject", out string exportProject))
+            {
+                bool.TryParse(exportProject, out bool value);
+                BuildSettings.Instance.android.exportProject = value;
+            }
+
+
+            foreach (var dic in options)
+            {
+                Debug.Log($"###################{dic.Key}##########{dic.Value}#############");
+            }
+
+            BuildPipeline.Build_Common();
+            BuildPipeline.Build_Android();
+
+            Debug.Log("#################Complete#################");
+
+            BuildSettings.Instance.autoBuild = false;
+            BuildSettings.Instance.isCloudBuild = false;
+            BuildSettings.Instance.autoGenerateAssetBundle = false;
+        }
 
         public static void BuildIOS()
         {
