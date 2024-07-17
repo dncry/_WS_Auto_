@@ -93,47 +93,50 @@ namespace WS.Auto
             }
 
 
-            if (options.TryGetValue("sdkPath", out string sdkPath))
+            if (!BuildSettings.Instance.android.exportProject)
             {
-                if (sdkPath != "")
+                if (options.TryGetValue("sdkPath", out string sdkPath))
                 {
-                    Debug.Log("********** Set sdkPath ***********");
+                    if (sdkPath != "")
+                    {
+                        Debug.Log("********** Set sdkPath ***********");
 
-                    EditorPrefs.SetBool("SdkUseEmbedded", false);
-                    EditorPrefs.SetString("AndroidSdkRoot", sdkPath);
+                        EditorPrefs.SetBool("SdkUseEmbedded", false);
+                        EditorPrefs.SetString("AndroidSdkRoot", sdkPath);
+                    }
                 }
-            }
 
-            if (options.TryGetValue("ndkPath", out string ndkPath))
-            {
-                if (ndkPath != "")
+                if (options.TryGetValue("ndkPath", out string ndkPath))
                 {
-                    Debug.Log("********** Set ndkPath ***********");
+                    if (ndkPath != "")
+                    {
+                        Debug.Log("********** Set ndkPath ***********");
 
-                    EditorPrefs.SetBool("NdkUseEmbedded", false);
-                    EditorPrefs.SetString("AndroidNdkRoot", ndkPath);
+                        EditorPrefs.SetBool("NdkUseEmbedded", false);
+                        EditorPrefs.SetString("AndroidNdkRoot", ndkPath);
+                    }
                 }
-            }
 
-            if (options.TryGetValue("jdkPath", out string jdkPath))
-            {
-                if (jdkPath != "")
+                if (options.TryGetValue("jdkPath", out string jdkPath))
                 {
-                    Debug.Log("********** Set jdkPath ***********");
+                    if (jdkPath != "")
+                    {
+                        Debug.Log("********** Set jdkPath ***********");
 
-                    EditorPrefs.SetBool("JdkUseEmbedded", false);
-                    EditorPrefs.SetString("JdkPath", jdkPath);
+                        EditorPrefs.SetBool("JdkUseEmbedded", false);
+                        EditorPrefs.SetString("JdkPath", jdkPath);
+                    }
                 }
-            }
 
-            if (options.TryGetValue("gradlePath", out string gradlePath))
-            {
-                if (gradlePath != "")
+                if (options.TryGetValue("gradlePath", out string gradlePath))
                 {
-                    Debug.Log("********** Set gradlePath ***********");
+                    if (gradlePath != "")
+                    {
+                        Debug.Log("********** Set gradlePath ***********");
 
-                    EditorPrefs.SetBool("GradleUseEmbedded", false);
-                    EditorPrefs.SetString("GradlePath", gradlePath);
+                        EditorPrefs.SetBool("GradleUseEmbedded", false);
+                        EditorPrefs.SetString("GradlePath", gradlePath);
+                    }
                 }
             }
 
@@ -153,74 +156,6 @@ namespace WS.Auto
             BuildSettings.Instance.autoGenerateAssetBundle = false;
         }
 
-
-        public static void BuildAndroidWithAndroidStudio()
-        {
-            Debug.Log("#################BuildAndroid#################");
-
-            BuildSettings.Instance.autoBuild = true;
-            BuildSettings.Instance.isCloudBuild = true;
-            BuildSettings.Instance.autoGenerateAssetBundle = true;
-
-            EditorUserBuildSettings.exportAsGoogleAndroidProject = false;
-
-
-            Dictionary<string, string> options = new Dictionary<string, string>();
-            ParseCommandLineArguments(out options);
-
-            // if (options.TryGetValue("customBuildPath", out string customBuildPath))
-            // {
-            //     BuildSettings.Instance.android.buildAAB =  customBuildPath.EndsWith(".aab");
-            // }
-
-            if (options.TryGetValue("buildVersion", out string buildVersion))
-            {
-                BuildSettings.Instance.version = buildVersion;
-            }
-
-            if (options.TryGetValue("buildBundleCode", out string buildBundleCode))
-            {
-                BuildSettings.Instance.android.bundleVersionCode = int.Parse(buildBundleCode);
-            }
-
-            if (options.TryGetValue("buildPath", out string buildPath))
-            {
-                BuildSettings.Instance.buildPath_Android = buildPath;
-            }
-
-            if (options.TryGetValue("buildSeparateAsset", out string buildSeparateAsset))
-            {
-                bool.TryParse(buildSeparateAsset, out bool value);
-                BuildSettings.Instance.android.separateAsset = value;
-            }
-
-            if (options.TryGetValue("buildAAB", out string buildAAB))
-            {
-                bool.TryParse(buildAAB, out bool value);
-                BuildSettings.Instance.android.buildAAB = value;
-            }
-
-            if (options.TryGetValue("exportProject", out string exportProject))
-            {
-                bool.TryParse(exportProject, out bool value);
-                BuildSettings.Instance.android.exportProject = value;
-            }
-
-
-            foreach (var dic in options)
-            {
-                Debug.Log($"###################{dic.Key}##########{dic.Value}#############");
-            }
-
-            BuildPipeline.Build_Common();
-            BuildPipeline.Build_Android();
-
-            Debug.Log("#################Complete#################");
-
-            BuildSettings.Instance.autoBuild = false;
-            BuildSettings.Instance.isCloudBuild = false;
-            BuildSettings.Instance.autoGenerateAssetBundle = false;
-        }
 
         public static void BuildIOS()
         {
