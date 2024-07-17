@@ -275,7 +275,9 @@ namespace WS.Auto
 
             if (BuildSettings.Instance.android.exportProject)
             {
-                filePath += "/exportProject";
+                //filePath += "/exportProject";
+                filePath =
+                    $"{System.Environment.CurrentDirectory}/{outPath}";
             }
 
             var buildPlayerOptions = new BuildPlayerOptions
