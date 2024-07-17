@@ -85,6 +85,12 @@ namespace WS.Auto
                 bool.TryParse(buildAAB, out bool value);
                 BuildSettings.Instance.android.buildAAB = value;
             }
+            
+            if (options.TryGetValue("exportProject", out string exportProject))
+            {
+                bool.TryParse(exportProject, out bool value);
+                BuildSettings.Instance.android.exportProject = value;
+            }
 
 
             if (options.TryGetValue("sdkPath", out string sdkPath))

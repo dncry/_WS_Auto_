@@ -84,6 +84,7 @@ namespace WS.Auto
 
             public bool separateAsset = false;
             public bool buildAAB = false;
+            public bool exportProject = false;
         }
 
 

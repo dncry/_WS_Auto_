@@ -64,7 +64,8 @@ namespace WS.Auto
             PlayerSettings.Android.keyaliasName = BuildSettings.Instance.android.keyaliasName;
             PlayerSettings.Android.keyaliasPass = BuildSettings.Instance.android.keyaliasPass;
 
-            EditorUserBuildSettings.buildAppBundle = BuildSettings.Instance.android.buildAAB;
+            // EditorUserBuildSettings.buildAppBundle = BuildSettings.Instance.android.buildAAB;
+
 
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
 
@@ -255,22 +256,27 @@ namespace WS.Auto
             string filePath =
                 $"{System.Environment.CurrentDirectory}/{outPath}/{BuildSettings.Instance.productName + "_" + BuildSettings.Instance.version + "_" + datatimenow}";
 
+            if (!BuildSettings.Instance.android.exportProject)
+            {
+                if (BuildSettings.Instance.android.buildAAB)
+                {
+                    EditorUserBuildSettings.buildAppBundle = true;
+                    filePath += ".aab";
+                }
+                else
+                {
+                    EditorUserBuildSettings.buildAppBundle = false;
+                    filePath += ".apk";
+                }
+            }
 
-            if (BuildSettings.Instance.android.buildAAB)
-            {
-                filePath += ".aab";
-            }
-            else
-            {
-                filePath += ".apk";
-            }
-
-            if (BuildSettings.Instance.isCloudBuild)
-            {
-                //filePath = outPath;
-            }
 
             Debug.Log($"################{filePath}");
+
+            if (BuildSettings.Instance.android.exportProject)
+            {
+                filePath += "/exportProject";
+            }
 
             var buildPlayerOptions = new BuildPlayerOptions
             {
@@ -279,6 +285,12 @@ namespace WS.Auto
                 options = BuildOptions.None,
                 scenes = GetScene()
             };
+
+            if (BuildSettings.Instance.android.exportProject)
+            {
+                buildPlayerOptions.options = BuildOptions.AcceptExternalModificationsToPlayer;
+            }
+
 
             BuildSummary buildSummary = UnityEditor.BuildPipeline.BuildPlayer(buildPlayerOptions).summary;
             ReportSummary(buildSummary);
