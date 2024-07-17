@@ -92,52 +92,52 @@ namespace WS.Auto
                 BuildSettings.Instance.android.exportProject = value;
             }
 
+            if (options.TryGetValue("sdkPath", out string sdkPath))
+            {
+                if (sdkPath != "")
+                {
+                    Debug.Log("********** Set sdkPath ***********");
 
+                    EditorPrefs.SetBool("SdkUseEmbedded", false);
+                    EditorPrefs.SetString("AndroidSdkRoot", sdkPath);
+                }
+            }
+
+            if (options.TryGetValue("ndkPath", out string ndkPath))
+            {
+                if (ndkPath != "")
+                {
+                    Debug.Log("********** Set ndkPath ***********");
+
+                    EditorPrefs.SetBool("NdkUseEmbedded", false);
+                    EditorPrefs.SetString("AndroidNdkRoot", ndkPath);
+                }
+            }
+
+            if (options.TryGetValue("jdkPath", out string jdkPath))
+            {
+                if (jdkPath != "")
+                {
+                    Debug.Log("********** Set jdkPath ***********");
+
+                    //EditorPrefs.SetBool("JdkUseEmbedded", false);
+                    //EditorPrefs.SetString("JdkPath", jdkPath);
+                }
+            }
+
+            if (options.TryGetValue("gradlePath", out string gradlePath))
+            {
+                if (gradlePath != "")
+                {
+                    Debug.Log("********** Set gradlePath ***********");
+
+                    EditorPrefs.SetBool("GradleUseEmbedded", false);
+                    EditorPrefs.SetString("GradlePath", gradlePath);
+                }
+            }
+            
             if (!BuildSettings.Instance.android.exportProject)
             {
-                if (options.TryGetValue("sdkPath", out string sdkPath))
-                {
-                    if (sdkPath != "")
-                    {
-                        Debug.Log("********** Set sdkPath ***********");
-
-                        EditorPrefs.SetBool("SdkUseEmbedded", false);
-                        EditorPrefs.SetString("AndroidSdkRoot", sdkPath);
-                    }
-                }
-
-                if (options.TryGetValue("ndkPath", out string ndkPath))
-                {
-                    if (ndkPath != "")
-                    {
-                        Debug.Log("********** Set ndkPath ***********");
-
-                        EditorPrefs.SetBool("NdkUseEmbedded", false);
-                        EditorPrefs.SetString("AndroidNdkRoot", ndkPath);
-                    }
-                }
-
-                if (options.TryGetValue("jdkPath", out string jdkPath))
-                {
-                    if (jdkPath != "")
-                    {
-                        Debug.Log("********** Set jdkPath ***********");
-
-                        EditorPrefs.SetBool("JdkUseEmbedded", false);
-                        EditorPrefs.SetString("JdkPath", jdkPath);
-                    }
-                }
-
-                if (options.TryGetValue("gradlePath", out string gradlePath))
-                {
-                    if (gradlePath != "")
-                    {
-                        Debug.Log("********** Set gradlePath ***********");
-
-                        EditorPrefs.SetBool("GradleUseEmbedded", false);
-                        EditorPrefs.SetString("GradlePath", gradlePath);
-                    }
-                }
             }
 
 
