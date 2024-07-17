@@ -273,6 +273,7 @@ namespace WS.Auto
 
             if (BuildSettings.Instance.android.exportProject)
             {
+                EditorUserBuildSettings.exportAsGoogleAndroidProject = true;
                 //filePath += "/exportProject";
                 filePath =
                     $"{System.Environment.CurrentDirectory}/{outPath}/AndroidProject";
@@ -287,11 +288,6 @@ namespace WS.Auto
                 options = BuildOptions.None,
                 scenes = GetScene()
             };
-
-            if (BuildSettings.Instance.android.exportProject)
-            {
-                buildPlayerOptions.options = BuildOptions.AcceptExternalModificationsToPlayer;
-            }
 
 
             BuildSummary buildSummary = UnityEditor.BuildPipeline.BuildPlayer(buildPlayerOptions).summary;
