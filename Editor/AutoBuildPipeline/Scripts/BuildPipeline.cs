@@ -271,14 +271,14 @@ namespace WS.Auto
             }
 
 
-            Debug.Log($"################{filePath}");
-
             if (BuildSettings.Instance.android.exportProject)
             {
                 //filePath += "/exportProject";
                 filePath =
-                    $"{System.Environment.CurrentDirectory}/{outPath}";
+                    $"{System.Environment.CurrentDirectory}/{outPath}/AndroidProject";
             }
+
+            Debug.Log($"################{filePath}");
 
             var buildPlayerOptions = new BuildPlayerOptions
             {
