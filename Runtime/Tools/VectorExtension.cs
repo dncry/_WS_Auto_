@@ -1,5 +1,4 @@
-﻿
-namespace WS.Auto
+﻿namespace WS.Auto
 {
     using UnityEngine;
 
@@ -25,7 +24,7 @@ namespace WS.Auto
         {
             var screenPos = worldCamera.WorldToScreenPoint(worldPos);
             if (RectTransformUtility.ScreenPointToWorldPointInRectangle(uiCanvas, screenPos, uiCamera,
-                out var uiPos))
+                    out var uiPos))
             {
             }
 
@@ -39,12 +38,32 @@ namespace WS.Auto
         public static Vector2 Screen2UI(this Vector2 screenPos, RectTransform uiCanvas, Camera uiCamera)
         {
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                uiCanvas, screenPos, uiCamera,
-                out var uiPosition))
+                    uiCanvas, screenPos, uiCamera,
+                    out var uiPosition))
             {
             }
 
             return uiPosition;
+        }
+
+
+        public static Vector3 World2Screen(this Vector3 worldPos, Camera worldCamera)
+        {
+            var screenPos = worldCamera.WorldToScreenPoint(worldPos);
+            return screenPos;
+        }
+
+        public static Vector3 Screen2World(this Vector3 screenPos, Camera worldCamera)
+        {
+            var worldPos = worldCamera.ScreenToWorldPoint(screenPos);
+            return worldPos;
+        }
+
+        public static Vector3 World2World(this Vector3 worldPos, Camera worldCamera1, Camera worldCamera2)
+        {
+            var screenPos = worldCamera1.WorldToScreenPoint(worldPos);
+            var worldPos2 = worldCamera2.ScreenToWorldPoint(screenPos);
+            return worldPos2;
         }
     }
 }
