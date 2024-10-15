@@ -258,6 +258,7 @@ namespace WS.Auto
 
             if (!BuildSettings.Instance.android.exportProject)
             {
+                EditorUserBuildSettings.exportAsGoogleAndroidProject = false;
                 if (BuildSettings.Instance.android.buildAAB)
                 {
                     EditorUserBuildSettings.buildAppBundle = true;
