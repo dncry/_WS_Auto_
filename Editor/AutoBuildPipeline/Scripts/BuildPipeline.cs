@@ -445,6 +445,10 @@ namespace WS.Auto
                 ? BuildSettings.Instance.buildPath_iOS
                 : outPath;
 
+            filePath =
+                $"{filePath}/ExportProject";
+
+
             var buildPlayerOptions = new BuildPlayerOptions
             {
                 target = BuildTarget.iOS,
