@@ -371,9 +371,8 @@ namespace WS.Auto
             if (BuildSettings.Instance.android.exportProject)
             {
                 EditorUserBuildSettings.exportAsGoogleAndroidProject = true;
-                //filePath += "/exportProject";
                 filePath =
-                    $"{System.Environment.CurrentDirectory}/{outPath}/AndroidProject";
+                    $"{System.Environment.CurrentDirectory}/{outPath}/ExportProject";
             }
 
             Debug.Log($"################{filePath}");
