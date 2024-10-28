@@ -93,6 +93,10 @@ namespace WS.Auto
 
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
 
+            PlayerSettings.iOS.cameraUsageDescription = "use camera";
+            PlayerSettings.iOS.locationUsageDescription = "use location";
+            PlayerSettings.iOS.microphoneUsageDescription = "use microphone";
+
             //optimize
             //加速度检测频率
             //PlayerSettings.accelerometerFrequency = 0;
@@ -101,6 +105,7 @@ namespace WS.Auto
 
             if (BuildSettings.Instance.autoGenerateAssetBundle)
             {
+                GenerateAssetBundle_Ios();
             }
 
             //打包
@@ -212,6 +217,97 @@ namespace WS.Auto
             object[] temp3 = { 1 << 3, false };
             object[] temp4 = { 1 << 4, false };
             object[] temp5 = { 1 << 5, true };
+            object[] temp6 = { 1 << 6, false };
+            object[] temp7 = { 1 << 7, false };
+
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp0);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp1);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp2);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp3);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp4);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp5);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp6);
+            control.FieldType.GetMethod("SelectPlatform").Invoke(tempControl, temp7);
+
+
+            control.SetValue(obj3, tempControl);
+
+            type3.GetMethod("SaveConfiguration", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(obj3, null);
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            // type3.GetField("m_OrderBuildResources", BindingFlags.NonPublic | BindingFlags.Instance)
+            //     .SetValue(obj3, true);
+
+            type3.GetMethod("BuildResources", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(obj3, null);
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            type3.GetMethod("CloseWithReflection").Invoke(obj3, null);
+
+            Debug.Log("#############BuildAssetBundle");
+
+#endif
+        }
+
+
+        private static void GenerateAssetBundle_Ios()
+        {
+#if AUTO_UGF
+            var assembly = Assembly.Load("Assembly-CSharp-Editor");
+
+            Type type = assembly.GetType(
+                $"{BuildSettings.Instance.nameSpace}.Editor.DataTableTools.DataTableGeneratorMenu");
+            var method = type.GetMethod("GenerateDataTables", BindingFlags.NonPublic | BindingFlags.Static);
+            method?.Invoke(null, null);
+
+            Debug.Log("#############GenerateDataTables");
+
+
+            Type type2 =
+                assembly.GetType($"{BuildSettings.Instance.nameSpace}.Editor.ResourceTools.ResourceRuleEditor");
+
+            object obj2 = type2.GetMethod("OpenWithReflection", BindingFlags.NonPublic | BindingFlags.Static)
+                ?.Invoke(null, null);
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            type2.GetMethod("RefreshResourceCollection").Invoke(obj2, null);
+
+            type2.GetMethod("Save", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(obj2, null);
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            type2.GetMethod("CloseWithReflection").Invoke(obj2, null);
+
+            Debug.Log("#############RefreshResourceCollection");
+
+
+            var assembly3 = Assembly.Load("UnityGameFramework.Editor");
+            Type type3 = assembly3.GetType("UnityGameFramework.Editor.ResourceTools.ResourceBuilder");
+
+            object obj3 =
+                type3.GetMethod("OpenWithReflection", BindingFlags.NonPublic | BindingFlags.Static)?.Invoke(null, null);
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            var control = type3.GetField("m_Controller",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+
+            var tempControl = control.GetValue(obj3);
+
+            control.FieldType.GetProperty("OutputDirectory")
+                .SetValue(tempControl, $"{System.Environment.CurrentDirectory}/StreamingAssets");
+
+            object[] tempVersion = { 1 };
+            control.FieldType.GetProperty("InternalResourceVersion").SetValue(tempControl, 1);
+
+            object[] temp0 = { 1 << 0, false };
+            object[] temp1 = { 1 << 1, false };
+            object[] temp2 = { 1 << 2, false };
+            object[] temp3 = { 1 << 3, false };
+            object[] temp4 = { 1 << 4, true };
+            object[] temp5 = { 1 << 5, false };
             object[] temp6 = { 1 << 6, false };
             object[] temp7 = { 1 << 7, false };
 
