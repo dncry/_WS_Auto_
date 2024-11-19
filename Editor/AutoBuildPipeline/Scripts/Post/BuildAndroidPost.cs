@@ -3,6 +3,7 @@
 ** Time：2024年11月19日 星期二 09:58
 ----------------------------------------------------------------*/
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,13 +19,12 @@ namespace WS.Auto
 
         public void OnPostGenerateGradleAndroidProject(string path)
         {
-            // Path.Combine(path, "../gradle.properties");
-
             var launcherManifestPath = Path.Combine(path, "../launcher/src/main/AndroidManifest.xml");
-
             Debug.Log($"######################### {launcherManifestPath} #####################");
+            ProcessLauncherAndroidManifest(launcherManifestPath);
 
-            ProcessAndroidManifest(launcherManifestPath);
+            var localPropertiesPath = Path.Combine(path, "../local.properties");
+            ProcessLocalProperties(localPropertiesPath);
         }
 
         public int callbackOrder
@@ -32,7 +32,7 @@ namespace WS.Auto
             get { return int.MaxValue; }
         }
 
-        private static void ProcessAndroidManifest(string path)
+        private static void ProcessLauncherAndroidManifest(string path)
         {
             var manifestPath = path;
 
@@ -57,7 +57,7 @@ namespace WS.Auto
                 return;
             }
 
-            DeleteManifestPackage(elementManifest);
+            DeleteLauncherManifestPackage(elementManifest);
 
             var elementApplication = elementManifest.Element("application");
             if (elementApplication == null)
@@ -73,8 +73,7 @@ namespace WS.Auto
             manifest.Save(manifestPath);
         }
 
-
-        private static void DeleteManifestPackage(XElement elementApplication)
+        private static void DeleteLauncherManifestPackage(XElement elementApplication)
         {
 #if !AUTO_FIX_API_35
             return;
@@ -88,6 +87,30 @@ namespace WS.Auto
                 p.Remove();
             }
         }
+
+
+        private static void ProcessLocalProperties(string path)
+        {
+            var gradlePropertiesPath = path;
+            var gradlePropertiesUpdated = new List<string>();
+
+            if (File.Exists(gradlePropertiesPath))
+            {
+                var lines = File.ReadAllLines(gradlePropertiesPath);
+                gradlePropertiesUpdated.AddRange(lines.Where(line => !line.Contains("ndk.dir")));
+            }
+
+            try
+            {
+                File.WriteAllText(gradlePropertiesPath, string.Join("\n", gradlePropertiesUpdated.ToArray()) + "\n");
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError("local.properties file write failed.");
+                Console.WriteLine(exception);
+            }
+        }
+
 
         /// <summary>
         /// Creates and returns a <c>meta-data</c> element with the given name and value. 
