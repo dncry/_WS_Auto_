@@ -26,6 +26,9 @@ namespace WS.Auto
             var unityLibraryManifestPath = Path.Combine(path, "../unityLibrary/src/main/AndroidManifest.xml");
             ProcessUnityLibraryAndroidManifest(unityLibraryManifestPath);
 
+            var unityLibraryMainGradle = Path.Combine(path, "../unityLibrary/build.gradle");
+            ProcessUnityLibraryMainGradle(unityLibraryMainGradle);
+            
             var localPropertiesPath = Path.Combine(path, "../local.properties");
             ProcessLocalProperties(localPropertiesPath);
         }
@@ -90,8 +93,7 @@ namespace WS.Auto
                 p.Remove();
             }
         }
-
-
+        
         private static void ProcessUnityLibraryAndroidManifest(string path)
         {
             var manifestPath = path;
@@ -148,6 +150,36 @@ namespace WS.Auto
             }
         }
 
+        
+        private static void ProcessUnityLibraryMainGradle(string path)
+        {
+#if !AUTO_FIX_API_35
+            return;
+#endif
+
+            var gradlePropertiesPath = path;
+            var gradlePropertiesUpdated = new List<string>();
+
+            if (File.Exists(gradlePropertiesPath))
+            {
+                var lines = File.ReadAllLines(gradlePropertiesPath);
+                gradlePropertiesUpdated.AddRange(lines.Where(line => !line.Contains("android.ndkDirectory")));
+            }
+            
+            try
+            {
+                File.WriteAllText(gradlePropertiesPath, string.Join("\n", gradlePropertiesUpdated.ToArray()) + "\n");
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError("local.properties file write failed.");
+                Console.WriteLine(exception);
+            }
+        }
+        
+        
+        
+        
         private static void ProcessLocalProperties(string path)
         {
 #if !AUTO_FIX_API_35
@@ -162,8 +194,6 @@ namespace WS.Auto
                 var lines = File.ReadAllLines(gradlePropertiesPath);
                 gradlePropertiesUpdated.AddRange(lines.Where(line => !line.Contains("ndk.dir")));
             }
-
-            gradlePropertiesUpdated.Add("ndk.dir=/tools/ndk");
             
             try
             {
@@ -176,7 +206,9 @@ namespace WS.Auto
             }
         }
 
-
+        
+        
+        
         /// <summary>
         /// Creates and returns a <c>meta-data</c> element with the given name and value. 
         /// </summary>
