@@ -49,8 +49,7 @@ namespace WS.Auto
             BuildSettings.Instance.autoGenerateAssetBundle = true;
 
             EditorUserBuildSettings.exportAsGoogleAndroidProject = false;
-
-
+            
             Dictionary<string, string> options = new Dictionary<string, string>();
             ParseCommandLineArguments(out options);
 
@@ -84,6 +83,12 @@ namespace WS.Auto
             {
                 bool.TryParse(buildAAB, out bool value);
                 BuildSettings.Instance.android.buildAAB = value;
+            }
+
+            if (options.TryGetValue("buildIL2CPP", out string buildIL2CPP))
+            {
+                bool.TryParse(buildIL2CPP, out bool value);
+                BuildSettings.Instance.android.il2Cpp = value;
             }
 
             if (options.TryGetValue("exportProject", out string exportProject))
@@ -135,7 +140,7 @@ namespace WS.Auto
                     EditorPrefs.SetString("GradlePath", gradlePath);
                 }
             }
-            
+
             if (!BuildSettings.Instance.android.exportProject)
             {
             }

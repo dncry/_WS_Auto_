@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using UnityEditor;
+using UnityEditor.Android;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -375,6 +377,20 @@ namespace WS.Auto
                     $"{System.Environment.CurrentDirectory}/{outPath}/ExportProject";
             }
 
+            if (BuildSettings.Instance.android.il2Cpp)
+            {
+                PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+                PlayerSettings.SetArchitecture(BuildTargetGroup.Android,
+                    (int)AndroidArchitecture.ARMv7 + (int)AndroidArchitecture.ARM64);
+            }
+            else
+            {
+                PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.Mono2x);
+                PlayerSettings.SetArchitecture(BuildTargetGroup.Android,
+                    (int)AndroidArchitecture.ARMv7);
+            }
+
+
             Debug.Log($"################{filePath}");
 
             var buildPlayerOptions = new BuildPlayerOptions
@@ -382,7 +398,7 @@ namespace WS.Auto
                 target = BuildTarget.Android,
                 locationPathName = filePath,
                 options = BuildOptions.None,
-                scenes = GetScene()
+                scenes = GetScene(),
             };
 
 

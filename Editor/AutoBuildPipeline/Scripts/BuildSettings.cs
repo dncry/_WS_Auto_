@@ -27,7 +27,7 @@ namespace WS.Auto
             BuildSettings.onChangeCallbacks.Remove(callback);
 
         private static void SettingsChanged() =>
-            BuildSettings.onChangeCallbacks.ForEach((Action<BuildSettings.OnChangeCallback>) (callback => callback()));
+            BuildSettings.onChangeCallbacks.ForEach((Action<BuildSettings.OnChangeCallback>)(callback => callback()));
 
         public delegate void OnChangeCallback();
 
@@ -37,7 +37,7 @@ namespace WS.Auto
             get
             {
                 BuildSettings.instance = BuildSettings.NullableInstance;
-                if ((UnityEngine.Object) BuildSettings.instance == (UnityEngine.Object) null)
+                if ((UnityEngine.Object)BuildSettings.instance == (UnityEngine.Object)null)
                     BuildSettings.instance = ScriptableObject.CreateInstance<BuildSettings>();
                 return BuildSettings.instance;
             }
@@ -47,7 +47,7 @@ namespace WS.Auto
         {
             get
             {
-                if ((UnityEngine.Object) BuildSettings.instance == (UnityEngine.Object) null)
+                if ((UnityEngine.Object)BuildSettings.instance == (UnityEngine.Object)null)
                     BuildSettings.instance =
                         AssetDatabase.LoadAssetAtPath<ScriptableObject>(
                                 Path.Combine(Path.Combine("Assets", "_WS_Auto_/Editor/AutoBuildPipeline"),
@@ -60,7 +60,7 @@ namespace WS.Auto
         #endregion
 
         public string nameSpace;
-        
+
         public string companyName = "";
         public string productName = "";
         public string version = "0.1";
@@ -85,6 +85,8 @@ namespace WS.Auto
             public bool separateAsset = false;
             public bool buildAAB = false;
             public bool exportProject = false;
+
+            public bool il2Cpp = true;
         }
 
 
@@ -99,10 +101,8 @@ namespace WS.Auto
         public bool autoGenerateAssetBundle;
         public string buildPath_Android = "";
         public string buildPath_iOS = "";
-        
-        
-        
-        [HideInInspector]
-        public bool isCloudBuild = false;
+
+
+        [HideInInspector] public bool isCloudBuild = false;
     }
 }
