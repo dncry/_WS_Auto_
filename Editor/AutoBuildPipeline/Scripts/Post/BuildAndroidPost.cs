@@ -23,6 +23,9 @@ namespace WS.Auto
             Debug.Log($"######################### {launcherManifestPath} #####################");
             ProcessLauncherAndroidManifest(launcherManifestPath);
 
+            var unityLibraryManifestPath = Path.Combine(path, "../unityLibrary/src/main/AndroidManifest.xml");
+            ProcessUnityLibraryAndroidManifest(unityLibraryManifestPath);
+
             var localPropertiesPath = Path.Combine(path, "../local.properties");
             ProcessLocalProperties(localPropertiesPath);
         }
@@ -89,12 +92,68 @@ namespace WS.Auto
         }
 
 
+        private static void ProcessUnityLibraryAndroidManifest(string path)
+        {
+            var manifestPath = path;
+
+            XDocument manifest;
+            try
+            {
+                manifest = XDocument.Load(manifestPath);
+            }
+#pragma warning disable 0168
+            catch (IOException exception)
+#pragma warning restore 0168
+            {
+                Debug.LogWarning("AndroidManifest.xml is missing.");
+                return;
+            }
+
+            // Get the `manifest` element.
+            var elementManifest = manifest.Element("manifest");
+            if (elementManifest == null)
+            {
+                Debug.LogWarning("AndroidManifest.xml is invalid.");
+                return;
+            }
+
+            DeleteLauncherManifestPackage(elementManifest);
+
+            var elementApplication = elementManifest.Element("application");
+            if (elementApplication == null)
+            {
+                Debug.LogWarning("AndroidManifest.xml is invalid.");
+                return;
+            }
+
+            var metaDataElements = elementApplication.Descendants()
+                .Where(element => element.Name.LocalName.Equals("meta-data"));
+
+            // Save the updated manifest file.
+            manifest.Save(manifestPath);
+        }
+
+        private static void DeleteUnityLibraryManifestPackage(XElement elementApplication)
+        {
+#if !AUTO_FIX_API_35
+            return;
+#endif
+
+            var p = elementApplication.Attribute("package");
+
+            Debug.Log($"######################### {p} #####################");
+            if (p != null)
+            {
+                p.Remove();
+            }
+        }
+
         private static void ProcessLocalProperties(string path)
         {
 #if !AUTO_FIX_API_35
             return;
 #endif
-            
+
             var gradlePropertiesPath = path;
             var gradlePropertiesUpdated = new List<string>();
 
