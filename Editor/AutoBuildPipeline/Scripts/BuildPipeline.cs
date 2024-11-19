@@ -380,14 +380,16 @@ namespace WS.Auto
             if (BuildSettings.Instance.android.il2Cpp)
             {
                 PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-                PlayerSettings.SetArchitecture(BuildTargetGroup.Android,
-                    (int)AndroidArchitecture.ARMv7 + (int)AndroidArchitecture.ARM64);
+
+                AndroidArchitecture aac = AndroidArchitecture.ARM64 | AndroidArchitecture.ARMv7;
+                PlayerSettings.Android.targetArchitectures = aac;
             }
             else
             {
                 PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.Mono2x);
-                PlayerSettings.SetArchitecture(BuildTargetGroup.Android,
-                    (int)AndroidArchitecture.ARMv7);
+
+                AndroidArchitecture aac = AndroidArchitecture.ARMv7;
+                PlayerSettings.Android.targetArchitectures = aac;
             }
 
 
