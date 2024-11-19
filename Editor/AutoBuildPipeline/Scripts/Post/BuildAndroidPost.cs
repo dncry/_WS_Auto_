@@ -91,6 +91,10 @@ namespace WS.Auto
 
         private static void ProcessLocalProperties(string path)
         {
+#if !AUTO_FIX_API_35
+            return;
+#endif
+            
             var gradlePropertiesPath = path;
             var gradlePropertiesUpdated = new List<string>();
 
