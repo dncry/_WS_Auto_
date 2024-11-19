@@ -163,6 +163,8 @@ namespace WS.Auto
                 gradlePropertiesUpdated.AddRange(lines.Where(line => !line.Contains("ndk.dir")));
             }
 
+            gradlePropertiesUpdated.Add("ndk.dir=/tools/ndk");
+            
             try
             {
                 File.WriteAllText(gradlePropertiesPath, string.Join("\n", gradlePropertiesUpdated.ToArray()) + "\n");
