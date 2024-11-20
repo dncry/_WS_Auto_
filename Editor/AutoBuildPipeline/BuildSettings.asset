@@ -12,24 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4223d02d59a5aab4ba4f53d09ca54290, type: 3}
   m_Name: BuildSettings
   m_EditorClassIdentifier: 
-  nameSpace: _SortNut
-  companyName: ow
-  productName: Nut Sort
-  version: 1.0.2
+  nameSpace: 
+  companyName: 
+  productName: 
+  version: 
   scenePaths:
   - Assets/GameMain/Scenes/Launch/Scene_Splash.unity
   - Assets/GameMain/Scenes/Launch/Scene_Launcher.unity
-  - Assets/GameMain/Scenes/Release/Scene_Menu.unity
-  - Assets/GameMain/Scenes/Release/Scene_Main.unity
-  - Assets/GameMain/Scenes/Release/Scene_End.unity
   android:
-    packageName: com.owws.SortNut
-    bundleVersionCode: 2
+    packageName: 
+    bundleVersionCode: 1
     keystoreName: common.keystore
-    keystorePass: common
-    keyaliasName: common
-    keyaliasPass: common
+    keystorePass: 
+    keyaliasName: 
+    keyaliasPass: 
+    separateAsset: 0
     buildAAB: 1
+    exportProject: 0
+    il2Cpp: 1
   iOS:
     packageName: 
     build: 1
