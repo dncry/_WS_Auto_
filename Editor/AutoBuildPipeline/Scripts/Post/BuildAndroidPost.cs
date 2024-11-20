@@ -20,7 +20,7 @@ namespace WS.Auto
         public void OnPostGenerateGradleAndroidProject(string path)
         {
             var launcherManifestPath = Path.Combine(path, "../launcher/src/main/AndroidManifest.xml");
-            Debug.Log($"######################### {launcherManifestPath} #####################");
+            //Debug.Log($"######################### {launcherManifestPath} #####################");
             ProcessLauncherAndroidManifest(launcherManifestPath);
 
             var unityLibraryManifestPath = Path.Combine(path, "../unityLibrary/src/main/AndroidManifest.xml");
@@ -31,6 +31,13 @@ namespace WS.Auto
             
             var localPropertiesPath = Path.Combine(path, "../local.properties");
             ProcessLocalProperties(localPropertiesPath);
+
+
+#if   AUTO_FIX_API_35
+            Debug.Log($"######################### AUTO_FIX_API_35 +  #####################");
+#else
+            Debug.Log($"######################### AUTO_FIX_API_35 - #####################");
+#endif 
         }
 
         public int callbackOrder
@@ -87,7 +94,8 @@ namespace WS.Auto
 
             var p = elementApplication.Attribute("package");
 
-            Debug.Log($"######################### {p} #####################");
+            //Debug.Log($"######################### {p} #####################");
+            
             if (p != null)
             {
                 p.Remove();
@@ -143,7 +151,7 @@ namespace WS.Auto
 
             var p = elementApplication.Attribute("package");
 
-            Debug.Log($"######################### {p} #####################");
+            //Debug.Log($"######################### {p} #####################");
             if (p != null)
             {
                 p.Remove();
