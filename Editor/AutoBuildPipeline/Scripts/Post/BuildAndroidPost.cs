@@ -28,16 +28,26 @@ namespace WS.Auto
 
             var unityLibraryMainGradle = Path.Combine(path, "../unityLibrary/build.gradle");
             ProcessUnityLibraryMainGradle(unityLibraryMainGradle);
-            
+
             var localPropertiesPath = Path.Combine(path, "../local.properties");
             ProcessLocalProperties(localPropertiesPath);
 
 
-#if   AUTO_FIX_API_35
+#if AUTO_FIX_API_35
             Debug.Log($"######################### AUTO_FIX_API_35 +  #####################");
 #else
             Debug.Log($"######################### AUTO_FIX_API_35 - #####################");
-#endif 
+#endif
+
+
+#if AUTO_FIREBASE
+            var firebaseManifestPath = Path.Combine(path, "../unityLibrary/FirebaseApp.androidlib/AndroidManifest.xml");
+            ProcessFirebaseAndroidManifest(firebaseManifestPath);
+
+            var firebaseMainGradle = Path.Combine(path, "../unityLibrary/FirebaseApp.androidlib/build.gradle");
+            ProcessFirebaseMainGradle(firebaseMainGradle);
+
+#endif
         }
 
         public int callbackOrder
@@ -70,7 +80,7 @@ namespace WS.Auto
                 return;
             }
 
-            DeleteLauncherManifestPackage(elementManifest);
+            DeleteManifestPackage(elementManifest);
 
             var elementApplication = elementManifest.Element("application");
             if (elementApplication == null)
@@ -86,7 +96,7 @@ namespace WS.Auto
             manifest.Save(manifestPath);
         }
 
-        private static void DeleteLauncherManifestPackage(XElement elementApplication)
+        private static void DeleteManifestPackage(XElement elementApplication)
         {
 #if !AUTO_FIX_API_35
             return;
@@ -95,13 +105,13 @@ namespace WS.Auto
             var p = elementApplication.Attribute("package");
 
             //Debug.Log($"######################### {p} #####################");
-            
+
             if (p != null)
             {
                 p.Remove();
             }
         }
-        
+
         private static void ProcessUnityLibraryAndroidManifest(string path)
         {
             var manifestPath = path;
@@ -127,7 +137,7 @@ namespace WS.Auto
                 return;
             }
 
-            DeleteLauncherManifestPackage(elementManifest);
+            DeleteManifestPackage(elementManifest);
 
             var elementApplication = elementManifest.Element("application");
             if (elementApplication == null)
@@ -143,22 +153,7 @@ namespace WS.Auto
             manifest.Save(manifestPath);
         }
 
-        private static void DeleteUnityLibraryManifestPackage(XElement elementApplication)
-        {
-#if !AUTO_FIX_API_35
-            return;
-#endif
 
-            var p = elementApplication.Attribute("package");
-
-            //Debug.Log($"######################### {p} #####################");
-            if (p != null)
-            {
-                p.Remove();
-            }
-        }
-
-        
         private static void ProcessUnityLibraryMainGradle(string path)
         {
 #if !AUTO_FIX_API_35
@@ -173,7 +168,7 @@ namespace WS.Auto
                 var lines = File.ReadAllLines(gradlePropertiesPath);
                 gradlePropertiesUpdated.AddRange(lines.Where(line => !line.Contains("android.ndkDirectory")));
             }
-            
+
             try
             {
                 File.WriteAllText(gradlePropertiesPath, string.Join("\n", gradlePropertiesUpdated.ToArray()) + "\n");
@@ -184,10 +179,7 @@ namespace WS.Auto
                 Console.WriteLine(exception);
             }
         }
-        
-        
-        
-        
+
         private static void ProcessLocalProperties(string path)
         {
 #if !AUTO_FIX_API_35
@@ -202,7 +194,7 @@ namespace WS.Auto
                 var lines = File.ReadAllLines(gradlePropertiesPath);
                 gradlePropertiesUpdated.AddRange(lines.Where(line => !line.Contains("ndk.dir")));
             }
-            
+
             try
             {
                 File.WriteAllText(gradlePropertiesPath, string.Join("\n", gradlePropertiesUpdated.ToArray()) + "\n");
@@ -214,9 +206,82 @@ namespace WS.Auto
             }
         }
 
-        
-        
-        
+
+        private static void ProcessFirebaseAndroidManifest(string path)
+        {
+            var manifestPath = path;
+
+            XDocument manifest;
+            try
+            {
+                manifest = XDocument.Load(manifestPath);
+            }
+#pragma warning disable 0168
+            catch (IOException exception)
+#pragma warning restore 0168
+            {
+                Debug.LogWarning("AndroidManifest.xml is missing.");
+                return;
+            }
+
+            // Get the `manifest` element.
+            var elementManifest = manifest.Element("manifest");
+            if (elementManifest == null)
+            {
+                Debug.LogWarning("AndroidManifest.xml is invalid.");
+                return;
+            }
+
+            DeleteManifestPackage(elementManifest);
+
+            var elementApplication = elementManifest.Element("application");
+            if (elementApplication == null)
+            {
+                Debug.LogWarning("AndroidManifest.xml is invalid.");
+                return;
+            }
+
+            // Save the updated manifest file.
+            manifest.Save(manifestPath);
+        }
+
+        private static void ProcessFirebaseMainGradle(string path)
+        {
+#if !AUTO_FIX_API_35
+            return;
+#endif
+
+            var gradlePropertiesPath = path;
+            var gradlePropertiesUpdated = new List<string>();
+
+            if (File.Exists(gradlePropertiesPath))
+            {
+                var lines = File.ReadAllLines(gradlePropertiesPath);
+
+
+                foreach (var line in lines)
+                {
+                    gradlePropertiesUpdated.Add(line);
+
+                    if (line.Contains("android {"))
+                    {
+                        gradlePropertiesUpdated.Add($"\n    namespace   'com.google.firebase.app.unity' \n");
+                    }
+                }
+            }
+
+            try
+            {
+                File.WriteAllText(gradlePropertiesPath, string.Join("\n", gradlePropertiesUpdated.ToArray()) + "\n");
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError("local.properties file write failed.");
+                Console.WriteLine(exception);
+            }
+        }
+
+
         /// <summary>
         /// Creates and returns a <c>meta-data</c> element with the given name and value. 
         /// </summary>
