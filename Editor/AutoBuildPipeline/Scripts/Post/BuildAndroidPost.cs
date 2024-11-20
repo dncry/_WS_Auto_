@@ -46,7 +46,6 @@ namespace WS.Auto
 
             var firebaseMainGradle = Path.Combine(path, "../unityLibrary/FirebaseApp.androidlib/build.gradle");
             ProcessFirebaseMainGradle(firebaseMainGradle);
-
 #endif
         }
 
