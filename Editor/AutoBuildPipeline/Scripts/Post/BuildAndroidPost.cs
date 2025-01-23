@@ -32,6 +32,9 @@ namespace WS.Auto
             var localPropertiesPath = Path.Combine(path, "../local.properties");
             ProcessLocalProperties(localPropertiesPath);
 
+            var gradlePropertiesPath = Path.Combine(path, "../gradle.properties");
+            ProcessGradleProperties(gradlePropertiesPath);
+
 
 #if AUTO_FIX_API_35
             Debug.Log($"######################### AUTO_FIX_API_35 +  #####################");
@@ -206,6 +209,33 @@ namespace WS.Auto
         }
 
 
+        private static void ProcessGradleProperties(string path)
+        {
+#if !AUTO_FIX_API_35
+            return;
+#endif
+
+            var gradlePropertiesPath = path;
+            var gradlePropertiesUpdated = new List<string>();
+
+            if (File.Exists(gradlePropertiesPath))
+            {
+                var lines = File.ReadAllLines(gradlePropertiesPath);
+                gradlePropertiesUpdated.AddRange(lines.Where(line => !line.Contains("android.useFullClasspathForDexingTransform")));
+            }
+
+            try
+            {
+                File.WriteAllText(gradlePropertiesPath, string.Join("\n", gradlePropertiesUpdated.ToArray()) + "\n");
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError("gradle.properties file write failed.");
+                Console.WriteLine(exception);
+            }
+        }
+
+
         private static void ProcessFirebaseAndroidManifest(string path)
         {
             var manifestPath = path;
@@ -282,7 +312,7 @@ namespace WS.Auto
 
 
         /// <summary>
-        /// Creates and returns a <c>meta-data</c> element with the given name and value. 
+        /// Creates and returns a <c>meta-data</c> element with the given name and value.
         /// </summary>
         private static XElement CreateMetaDataElement(string name, object value)
         {
