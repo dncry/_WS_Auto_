@@ -221,7 +221,7 @@ namespace WS.Auto
             if (File.Exists(gradlePropertiesPath))
             {
                 var lines = File.ReadAllLines(gradlePropertiesPath);
-                gradlePropertiesUpdated.AddRange(lines.Where(line => !line.Contains("android.useFullClasspathForDexingTransform")));
+                gradlePropertiesUpdated.AddRange(lines.Where(line => !line.Contains("android.enableDexingArtifactTransform")));
             }
 
             try
