@@ -215,6 +215,8 @@ namespace WS.Auto
             return;
 #endif
 
+            return;
+
             var gradlePropertiesPath = path;
             var gradlePropertiesUpdated = new List<string>();
 
