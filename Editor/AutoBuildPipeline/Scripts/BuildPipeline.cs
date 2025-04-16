@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.Android;
 using UnityEditor.Build;
@@ -431,8 +432,10 @@ namespace WS.Auto
             );
         }
 
-        private static void ExitWithResult(BuildResult result)
+        private static async void  ExitWithResult(BuildResult result)
         {
+            await Task.Delay(1000); // 延迟 1 秒
+            
             switch (result)
             {
                 case BuildResult.Succeeded:
