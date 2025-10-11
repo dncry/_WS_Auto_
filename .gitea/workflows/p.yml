@@ -20,7 +20,7 @@ jobs:
           node-version: 20
 
       - name: Pack Unity package
-        working-directory: com.ws.auto
+        working-directory: .
         run: |
           npm pack
           ls -l *.tgz
@@ -30,7 +30,7 @@ jobs:
           NEXUS_USER: "admin"
           NEXUS_PASS: "12345678"
           NEXUS_URL: "http://192.168.50.83:8081/repository/ow-unity-npm-local/"
-        working-directory: com.ws.auto
+        working-directory: .
         run: |
           FILE=$(ls *.tgz)
           echo "Uploading $FILE to Nexus..."
