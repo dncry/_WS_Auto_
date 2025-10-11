@@ -1,0 +1,39 @@
+name: Publish Unity Package to Nexus
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js (for npm pack)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Pack Unity package
+        working-directory: com.ws.auto
+        run: |
+          npm pack
+          ls -l *.tgz
+
+      - name: Upload to Nexus
+        env:
+          NEXUS_USER: "admin"
+          NEXUS_PASS: "12345678"
+          NEXUS_URL: "http://192.168.50.83:8081/repository/ow-unity-npm-local/"
+        working-directory: com.ws.auto
+        run: |
+          FILE=$(ls *.tgz)
+          echo "Uploading $FILE to Nexus..."
+          curl -u "$NEXUS_USER:$NEXUS_PASS" \
+               --upload-file "$FILE" \
+               "$NEXUS_URL$FILE"
