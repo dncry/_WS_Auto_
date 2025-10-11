@@ -8,7 +8,7 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-22.04:docker://node:16-bullseye
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
