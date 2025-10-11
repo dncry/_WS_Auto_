@@ -8,7 +8,7 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: runner-labels-1
 
     steps:
       - name: Checkout repository
