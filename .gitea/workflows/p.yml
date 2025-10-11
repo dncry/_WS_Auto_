@@ -25,15 +25,18 @@ jobs:
           npm pack
           ls -l *.tgz
 
-      - name: Upload to Nexus
+      - name: Upload to Nexus (npm publish)
+        working-directory: .
         env:
           NEXUS_USER: "admin"
           NEXUS_PASS: "12345678"
           NEXUS_URL: "http://192.168.50.83:8081/repository/ow-unity-npm-local/"
-        working-directory: .
         run: |
-          FILE=$(ls *.tgz)
-          echo "Uploading $FILE to Nexus..."
-          curl -u "$NEXUS_USER:$NEXUS_PASS" \
-               --upload-file "$FILE" \
-               "$NEXUS_URL$FILE"
+          echo "Configuring npm registry..."
+          npm config set registry $NEXUS_URL
+          
+          # 设置 Basic Auth（Base64 编码）
+          npm config set //192.168.50.83:8081/repository/ow-unity-npm-local/:_auth "$(echo -n $NEXUS_USER:$NEXUS_PASS | base64)"
+          
+          echo "Publishing package to Nexus..."
+          npm publish
