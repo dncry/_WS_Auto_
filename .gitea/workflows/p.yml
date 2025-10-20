@@ -1,47 +1,47 @@
 name: Publish Unity Package to Nexus
-	
-	on:
-	  push:
-	    branches:
-	      - main
-	      - master
-	    paths:
-	      - "package.json"
-	
-	jobs:
-	  publish:
-	    runs-on: ubuntu-22.04
-	
-	    steps:
-	      - name: Checkout repository
-	        uses: actions/checkout@v4
-	
-	      - name: Install Node.js (for npm pack)
-	        uses: actions/setup-node@v4
-	        with:
-	          node-version: 20
-	
-	      - name: Pack Unity package
-	        working-directory: .
-	        run: |
-	          npm pack
-	          ls -l *.tgz          
-	
-	      - name: Upload to Nexus (npm publish)
-	        working-directory: .
-	        env:
-	          NEXUS_USER: "admin"
-	          NEXUS_PASS: "12345678"
-	          NEXUS_URL: "http://192.168.50.83:8081/repository/ow-unity-npm-local/"
-	        run: |
-	          echo "Configuring npm registry..."
-	          npm config set registry $NEXUS_URL
-	          
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "package.json"
+
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js (for npm pack)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Pack Unity package
+        working-directory: .
+        run: |
+          npm pack
+          ls -l *.tgz          
+
+      - name: Upload to Nexus (npm publish)
+        working-directory: .
+        env:
+          NEXUS_USER: "admin"
+          NEXUS_PASS: "12345678"
+          NEXUS_URL: "http://192.168.50.83:8081/repository/ow-unity-npm-local/"
+        run: |
+          echo "Configuring npm registry..."
+          npm config set registry $NEXUS_URL
+          
           # 设置 Basic Auth（Base64 编码）
-	          npm config set //192.168.50.83:8081/repository/ow-unity-npm-local/:_auth "$(echo -n $NEXUS_USER:$NEXUS_PASS | base64)"
-	          
-	          FILE=$(ls *.tgz)
-	          echo "Publishing $FILE to Nexus..."          
-	      
-	          #  用 tgz 文件发布
-	          npm publish $FILE --registry=$NEXUS_URL 
+          npm config set //192.168.50.83:8081/repository/ow-unity-npm-local/:_auth "$(echo -n $NEXUS_USER:$NEXUS_PASS | base64)"
+          
+          FILE=$(ls *.tgz)
+          echo "Publishing $FILE to Nexus..."
+          
+          #  用 tgz 文件发布
+          npm publish $FILE --registry=$NEXUS_URL           
